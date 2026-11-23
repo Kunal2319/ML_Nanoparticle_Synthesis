@@ -250,4 +250,4 @@ Each row's `Title of Article` and `Reference` ID identify the paper it came from
 
 ## 13. Contact
 
-**Kunal Mishra**, IIT Roorkee (Chemical Engineering) · [LinkedIn](https://www.linkedin.com/in/kunal-mishra-0b117a228/) · Portfolio: [add link]
+**Kunal Mishra**, IIT Roorkee (Chemical Engineering) · [LinkedIn](https://www.linkedin.com/in/kunal-mishra-0b117a228/) · [Portfolio](https://kunal-mishra.vercel.app/)
