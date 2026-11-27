@@ -1,8 +1,8 @@
 # Machine Learning for Nanoparticle Synthesis: Predicting Size and Shape from Literature-Mined Recipes
 
-#### Mitacs Globalink Research Internship, University of Guelph (Summer 2024)
+#### Mitacs Globalink Research Internship, University of Guelph (May–Aug 2024)
 
-I built a dataset of nanoparticle synthesis experiments by extracting data from about 130 published papers, then trained models to predict nanoparticle **size** (regression) and **shape** (classification) from the synthesis recipe, for **chemical** and **green** (plant, fungal or bacterial extract) routes.
+I built a dataset of nanoparticle synthesis experiments by extracting data from 130 published papers, then trained models to predict nanoparticle **size** (regression) and **shape** (classification) from the synthesis recipe, for **chemical** and **green** (plant, fungal or bacterial extract) routes.
 
 My first results looked strong (R² = 0.85 for size). When I re-evaluated the work, holding out whole papers instead of random rows, **no model could be reliably distinguished from a trivial baseline.** This repository contains both analyses and explains why they differ. The main contribution of the project is that lesson about evaluation and data, with the evidence for it.
 
@@ -13,12 +13,12 @@ My first results looked strong (R² = 0.85 for size). When I re-evaluated the wo
 | | |
 |---|---|
 | **Question** | Can a synthesis recipe (reagents, concentrations, temperature, time, stirring) predict the size and shape of the nanoparticles, for a paper the model has never seen? |
-| **Data** | 307 experiment rows extracted by hand from about 130 papers (46 chemical-synthesis, 84–85 green-synthesis; 2014–2024) |
+| **Data** | 307 experiment rows extracted by hand from 130 papers (46 chemical-synthesis, 84 green-synthesis; 2014–2024) |
 | **Targets** | Average size (nm), as `log10(size)`. Shape, as spherical vs non-spherical. |
 | **Methods** | Chemistry-informed features, paper-grouped nested cross-validation, baselines, paired bootstrap over papers, permutation importance, within-paper effect analysis |
 | **Stack** | Python, pandas, scikit-learn, scipy, seaborn/matplotlib |
 | **My role** | Literature search, data extraction and curation, cleaning, modelling, and the critical re-evaluation |
-| **Supervisor** | Dr. Ashutosh Singh, University of Guelph (Mitacs Globalink Research Internship, May–Aug 2024) |
+| **Supervisor** | Dr. Ashutosh Singh, Professor, College of Engineering, University of Guelph |
 | **Certificate** | [Mitacs Globalink completion certificate](docs/Mitacs_Globalink_Completion_Certificate.pdf) |
 
 ### Findings in brief
@@ -32,7 +32,7 @@ My first results looked strong (R² = 0.85 for size). When I re-evaluated the wo
 
 ## 2. Motivation
 
-According to the International Union of Pure and Applied Chemistry (IUPAC), a nanoparticle is defined as a particle having one or more distinctive dimensions between ~1 and 100 nm. Nanoparticles represent a promising and innovative approach to material science and engineering. Nanoparticle properties such as plasmon resonance, catalytic activity and antibacterial effect depend strongly on size and shape. Those depend in turn on many interacting synthesis parameters: reagent identity and concentration, temperature, stirring, reaction time, and order of addition. Finding the most effective recipe and reaction conditions is time-consuming, labour-intensive, resource-intensive and is mostly trial and error, so a model that predicts outcomes from a recipe could narrow the search before anyone enters the lab.
+According to the International Union of Pure and Applied Chemistry (IUPAC), a nanoparticle is defined as a particle having one or more distinctive dimensions between ~1 and 100 nm. Nanoparticles represent a promising and innovative approach to material science and engineering. Nanoparticle properties such as plasmon resonance, catalytic activity and antibacterial effect depend strongly on **size and shape**. Those depend, in turn, on many interacting synthesis parameters: reagent identity and concentration, temperature, stirring, reaction time, and order of addition. Finding the most effective recipe and reaction conditions is time-consuming, labour-intensive, resource-intensive and is mostly trial and error, so a model that predicts outcomes from a recipe could narrow the search before anyone enters the lab.
 
 The main obstacle is **data**. There is no standard, machine-readable repository of synthesis recipes. The information sits in the methods sections of papers, reported with inconsistent units and inconsistent completeness. Building a usable dataset from that literature was a large part of this work, and it turned out to determine what the models could learn.
 
@@ -49,7 +49,7 @@ Both datasets cover papers on **antibacterial nanoparticles** found in a literat
 |---|---|---|
 | File | `data/Nanoparticles_Synthesis_Dataset - Chemical_Synthesis.xlsx` | `data/Nanoparticles_Synthesis_Dataset - Green_Synthesis.xlsx` |
 | Raw size | 166 rows × 26 columns | 141 rows × 21 columns |
-| Source papers | 46 titles (47 reference IDs) | 84 titles |
+| Source papers | 46 titles  | 84 titles |
 | Rows with a usable size | 147 (39 papers) | 120 (69 papers) |
 | Rows with a reported shape | 103 (34 papers), 37% non-spherical | 121 (70 papers), 7% non-spherical (9 rows, 7 papers) |
 | Rows per paper | median 2, max 18 | median 1, max 27 |
@@ -67,7 +67,7 @@ Two notebooks, one per synthesis route, share the helper module `src/np_utils.py
 |---|---|---|
 | **Cleaning** | Repair text encoding. Parse messy cells (ranges such as `5-30`, ratios stored as clock times by Excel). Merge label variants (`AgNps`, `AgNPs`, `Ag NPs` → Ag). | Mixed spellings and formats silently create fake categories. |
 | **Targets** | `log10(size)`. Shape reduced to spherical vs non-spherical. **Rows with a missing target are dropped, never imputed.** | Raw sizes reach 1,140 nm. Most shape labels have 1–6 examples. An imputed target is a number the model was handed. |
-| **Units** | Molar concentrations converted to mM. Mass or percent units (18% of precursor, 20% of reducing-agent, over half of stabiliser values) cannot be converted and are set to missing, with a "was missing" flag. | The 2024 version stored `0.005 mM` and `0.005 M` in one column. |
+| **Units** | Molar concentrations converted to mM. Mass or percent units (18% of precursor, 20% of reducing-agent, over half of stabiliser values) cannot be converted and are set to missing, with a "was missing" flag. | To have consistent units of concentrations.. |
 | **Features** | Nanoparticle family, reducing-agent class (borohydride, citrate, ascorbic acid, ...), stabiliser class, agitation class, log concentrations, reducer-to-precursor molar ratio, log time, temperature; for green synthesis also extract kind, genus and extract volume fraction. | Encodes what a chemist reasons about instead of arbitrary integer codes. |
 | **Splitting** | Repeated (5×) 5-fold CV **grouped by paper**. Hyperparameters tuned in a nested loop that also groups by paper. Imputation, scaling and encoding fit inside each training fold. | Every score is on papers unseen in training, with no leakage from preprocessing. |
 | **Baselines** | Global median; median per nanoparticle family (classification: class prior; prior per family). | A model only matters if it beats these. |
@@ -166,7 +166,7 @@ The numbers are not directly comparable (raw versus log scale, different metrics
 
 ### What it taught me about data and responsibility
 
-The project showed me how easily a dataset assembled from many human sources hides the structure that matters. Differences between sources are information about the data-generating process, not noise to average away, and a standard evaluation can conceal who or what a model fails on. I now see the same pattern in data built from many annotators: collapsing their disagreement into one label, and testing on random rows, hides which voices a model has not learned.
+The project showed me how easily a dataset assembled from many human sources hides the structure that matters. Differences between sources are information about the data-generating process, not noise to average away, and a standard evaluation can conceal who or what a model fails on.
 
 ---
 
@@ -213,8 +213,8 @@ The project showed me how easily a dataset assembled from many human sources hid
 │   ├── Nanoparticles_Synthesis_Dataset - Chemical_Synthesis.xlsx
 │   └── Nanoparticles_Synthesis_Dataset - Green_Synthesis.xlsx
 ├── notebooks/
-│   ├── Chemical_Synthesis_v2.ipynb     # re-evaluation (executed, outputs included)
-│   ├── Green_Synthesis_v2.ipynb        # re-evaluation (executed, outputs included)
+│   ├── Chemical_Synthesis_v2.ipynb     # re-evaluation 
+│   ├── Green_Synthesis_v2.ipynb        # re-evaluation 
 │   └── archive_initial/                # initial notebooks (random split), kept for comparison
 ├── src/
 │   └── np_utils.py                     # parsing, grouped CV, bootstrap, permutation importance
@@ -234,13 +234,12 @@ git clone <this-repo-url> && cd <repo>
 python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt                        # needs scikit-learn >= 1.6
 
-jupyter notebook notebooks/                            # each notebook takes about 8 minutes on 2 cores
+jupyter notebook notebooks/                           
 
 python scripts/robustness_check.py "data/Nanoparticles_Synthesis_Dataset - Chemical_Synthesis.xlsx" chem
 python scripts/robustness_check.py "data/Nanoparticles_Synthesis_Dataset - Green_Synthesis.xlsx" green
 ```
 
-The initial manuscript and notebooks used Python 3.9 and scikit-learn 0.24.2; the re-evaluation notebooks need scikit-learn 1.6 or newer (they use `GroupKFold(shuffle=True)`).
 
 ## 12. Data sources and licence
 
@@ -248,4 +247,4 @@ Each row's `Title of Article` and `Reference` ID identify the paper it came from
 
 ## 13. Contact
 
-**Kunal Mishra**, IIT Roorkee (Chemical Engineering) · [LinkedIn](https://www.linkedin.com/in/kunal-mishra-0b117a228/) · [Portfolio](https://kunal-mishra.vercel.app/)
+**Kunal Mishra**, IIT Roorkee (Chemical Engineering) · kunalmishra1923@gmail.com · [LinkedIn](https://www.linkedin.com/in/kunal-mishra-0b117a228/) · [Portfolio](https://kunal-mishra.vercel.app/)
