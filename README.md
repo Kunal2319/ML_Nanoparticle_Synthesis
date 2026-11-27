@@ -1,10 +1,10 @@
 # Machine Learning for Nanoparticle Synthesis: Predicting Size and Shape from Literature-Mined Recipes
 
-Mitacs Globalink Research Internship, University of Guelph (Summer 2024), with a later leakage-free re-evaluation
+#### Mitacs Globalink Research Internship, University of Guelph (Summer 2024)
 
 I built a dataset of nanoparticle synthesis experiments by extracting data from about 130 published papers, then trained models to predict nanoparticle **size** (regression) and **shape** (classification) from the synthesis recipe, for **chemical** and **green** (plant, fungal or bacterial extract) routes.
 
-My initial results looked strong (R² = 0.85 for size). When I re-evaluated the work, holding out whole papers instead of random rows, **no model could be reliably distinguished from a trivial baseline.** This repository contains both analyses and explains why they differ. The main contribution of the project is that lesson about evaluation and data, with the evidence for it.
+My first results looked strong (R² = 0.85 for size). When I re-evaluated the work, holding out whole papers instead of random rows, **no model could be reliably distinguished from a trivial baseline.** This repository contains both analyses and explains why they differ. The main contribution of the project is that lesson about evaluation and data, with the evidence for it.
 
 ---
 
@@ -17,8 +17,7 @@ My initial results looked strong (R² = 0.85 for size). When I re-evaluated the 
 | **Targets** | Average size (nm), as `log10(size)`. Shape, as spherical vs non-spherical. |
 | **Methods** | Chemistry-informed features, paper-grouped nested cross-validation, baselines, paired bootstrap over papers, permutation importance, within-paper effect analysis |
 | **Stack** | Python, pandas, scikit-learn, scipy, seaborn/matplotlib |
-| **My role** | Literature search, data extraction and curation, cleaning, modelling, manuscript draft, and the later critical re-evaluation |
-| **Status** | Unpublished manuscript draft from the internship. The re-evaluation in this repository supersedes its model results. |
+| **My role** | Literature search, data extraction and curation, cleaning, modelling, and the critical re-evaluation |
 | **Supervisor** | Dr. Ashutosh Singh, University of Guelph (Mitacs Globalink Research Internship, May–Aug 2024) |
 | **Certificate** | [Mitacs Globalink completion certificate](docs/Mitacs_Globalink_Completion_Certificate.pdf) |
 
@@ -33,7 +32,7 @@ My initial results looked strong (R² = 0.85 for size). When I re-evaluated the 
 
 ## 2. Motivation
 
-Nanoparticle properties such as plasmon resonance, catalytic activity and antibacterial effect depend strongly on size and shape. Those depend in turn on many interacting synthesis parameters: reagent identity and concentration, temperature, stirring, reaction time, and order of addition. Finding a good recipe is mostly trial and error, so a model that predicts outcomes from a recipe could narrow the search before anyone enters the lab.
+According to the International Union of Pure and Applied Chemistry (IUPAC), a nanoparticle is defined as a particle having one or more distinctive dimensions between ~1 and 100 nm. Nanoparticles represent a promising and innovative approach to material science and engineering. Nanoparticle properties such as plasmon resonance, catalytic activity and antibacterial effect depend strongly on size and shape. Those depend in turn on many interacting synthesis parameters: reagent identity and concentration, temperature, stirring, reaction time, and order of addition. Finding the most effective recipe and reaction conditions is time-consuming, labour-intensive, resource-intensive and is mostly trial and error, so a model that predicts outcomes from a recipe could narrow the search before anyone enters the lab.
 
 The main obstacle is **data**. There is no standard, machine-readable repository of synthesis recipes. The information sits in the methods sections of papers, reported with inconsistent units and inconsistent completeness. Building a usable dataset from that literature was a large part of this work, and it turned out to determine what the models could learn.
 
@@ -55,7 +54,6 @@ Both datasets cover papers on **antibacterial nanoparticles** found in a literat
 | Rows with a reported shape | 103 (34 papers), 37% non-spherical | 121 (70 papers), 7% non-spherical (9 rows, 7 papers) |
 | Rows per paper | median 2, max 18 | median 1, max 27 |
 
-> The internship draft counts 131 papers (46 + 85). The sheets released here contain 46 + 84 unique titles (130). I did not trace the one-paper difference, so this README says "about 130 papers".
 
 Each row carries the article title and a `Reference` ID, so every data point can be traced to its source. Columns with more than about 50–70% missing values (feeding rate, pressure, calcination, pH, stirring rate, coating, yield, min/max size and others) were not used.
 
