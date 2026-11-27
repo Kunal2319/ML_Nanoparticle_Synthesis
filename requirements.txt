@@ -1,4 +1,4 @@
-# The v2 notebooks need scikit-learn >= 1.6 (GroupKFold(shuffle=True) is used)
+
 numpy
 pandas
 scipy
